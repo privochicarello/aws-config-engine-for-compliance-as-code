@@ -226,7 +226,7 @@ def get_all_rules():
     return all_rules
 
 def get_client_from_role(service, role_arn, region=None):
-    credentials = get_assume_role_credentials(role_arn, region=None)
+    credentials = get_assume_role_credentials(role_arn)
     if not region:
         return boto3.client(service, aws_access_key_id=credentials['AccessKeyId'],
                             aws_secret_access_key=credentials['SecretAccessKey'],

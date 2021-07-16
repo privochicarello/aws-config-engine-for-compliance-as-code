@@ -1,13 +1,13 @@
 {
   "Version": "1.0",
   "Parameters": {
-    "RuleName": "RDS_INSTANCE_PUBLIC_ACCESS_CHECK",
+    "RuleName": "EC2_INSTANCE_NO_PUBLIC_IP",
     "SourceRuntime": null,
     "CodeKey": null,
     "InputParameters": "{}",
     "OptionalParameters": "{}",
-    "SourceEvents": "AWS::RDS::DBInstance",
-    "SourceIdentifier": "RDS_INSTANCE_PUBLIC_ACCESS_CHECK",
+    "SourceEvents": "AWS::EC2::Instance",
+    "SourceIdentifier": "EC2_INSTANCE_NO_PUBLIC_IP",
     "RuleSets": [
       "securitybaseline"
     ]

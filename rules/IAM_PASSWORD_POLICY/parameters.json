@@ -9,8 +9,7 @@
     "SourcePeriodic": "TwentyFour_Hours",
     "SourceIdentifier": "IAM_PASSWORD_POLICY",
     "RuleSets": [
-      "baseline",
-      "rulecriticity:high"
+      "securitybaseline"
     ]
   }
 }

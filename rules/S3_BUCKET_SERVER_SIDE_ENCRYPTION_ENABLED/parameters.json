@@ -1,13 +1,13 @@
 {
   "Version": "1.0",
   "Parameters": {
-    "RuleName": "S3_BUCKET_PUBLIC_READ_PROHIBITED",
+    "RuleName": "S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED",
     "SourceRuntime": null,
     "CodeKey": null,
     "InputParameters": "{}",
     "OptionalParameters": "{}",
     "SourceEvents": "AWS::S3::Bucket",
-    "SourceIdentifier": "S3_BUCKET_PUBLIC_READ_PROHIBITED",
+    "SourceIdentifier": "S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED",
     "RuleSets": [
       "securitybaseline"
     ]

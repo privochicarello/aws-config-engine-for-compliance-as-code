@@ -9,11 +9,7 @@
     "SourceEvents": "AWS::S3::Bucket",
     "SourceIdentifier": "S3_BUCKET_SSL_REQUESTS_ONLY",
     "RuleSets": [
-      "confidentiality:high",
-      "confidentiality:medium",
-      "pci",
-      "rulecriticity:high",
-      "otherregionsbaseline"
+      "pci"
     ]
   }
 }

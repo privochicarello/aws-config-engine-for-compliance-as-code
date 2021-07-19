@@ -1,0 +1,14 @@
+{
+  "Version": "1.0",
+  "Parameters": {
+    "RuleName": "VPC_NO_DEFAULT",
+    "SourceRuntime": "python3.6",
+    "CodeKey": "VPC_NO_DEFAULT.zip",
+    "InputParameters": "{}",
+    "OptionalParameters": "{}",
+    "SourcePeriodic": "TwentyFour_Hours",
+    "RuleSets": [
+      "securitybaseline"
+    ]
+  }
+}

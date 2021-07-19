@@ -1,0 +1,16 @@
+{
+  "Version": "1.0",
+  "Parameters": {
+    "RuleName": "IAM_NO_INLINE_POLICY_CHECK",
+    "SourceRuntime": null,
+    "CodeKey": null,
+    "InputParameters": "{}",
+    "OptionalParameters": "{}",
+    "SourceEvents": ["AWS::IAM::Group","AWS::IAM::User"],
+    "SourceIdentifier": "IAM_NO_INLINE_POLICY_CHECK",
+    "RuleSets": [
+      "securitybaseline"
+    ]
+  },
+  "Tags": "[]"
+}

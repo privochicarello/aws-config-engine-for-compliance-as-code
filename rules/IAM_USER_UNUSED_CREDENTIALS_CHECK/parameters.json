@@ -9,7 +9,7 @@
     "SourcePeriodic": "TwentyFour_Hours",
     "SourceIdentifier": "IAM_USER_UNUSED_CREDENTIALS_CHECK",
     "RuleSets": [
-      "securitybaseline"
+      "baseline"
     ]
   },
   "Tags": "[]"

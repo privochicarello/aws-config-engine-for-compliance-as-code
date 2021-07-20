@@ -20,11 +20,7 @@ Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
-          default: Compliance-as-Code Engine Configuration
-        Parameters:
-         - KMSAdminRoleName
-      - Label:
-          default: (Advanced User Only) Deployment options
+          default: Advanced Deployment Options
         Parameters:
          - ComplianceEngineCodeBuildRoleName
          - ComplianceEngineCodePipelineRoleName
@@ -33,9 +29,6 @@ Metadata:
          - LambdaRoleETLName
 
 Parameters:
-  KMSAdminRoleName:
-    Type: String
-    Description: 'KMS key admin access will be granted to the administer with this IAM role arn assigned'
   ComplianceEngineCodeBuildRoleName:
     Description: Role Name of the Compliance Account CodeBuild Role
     Default: ComplianceEngine-CodeBuildRole
@@ -56,16 +49,6 @@ Parameters:
     Description: Default ETL LambdaRole name in compliance account.
     Default: ComplianceEngine-LambdaETLRole
     Type: String
-  GrantComplianceEngineAccess:
-    Description: Set true to add compliance engine roles to the key policy
-    Default: false
-    AllowedValues:
-      - true
-      - false
-    Type: String
-
-Conditions:
-  cGrantComplianceEngineAccess: !Equals [ !Ref GrantComplianceEngineAccess, 'true']
 
 Resources:
   # Create encryption key
@@ -77,58 +60,35 @@ Resources:
         Version: "2012-10-17"
         Id: kms-configpolicy
         Statement:
-          # this policy is required, so that IAM policies/users/roles can get access to this key
           - Sid: "Enable Root User"
             Effect: "Allow"
-            Action: "kms:*"
             Principal:
-              AWS: !Sub "arn:aws:iam::${AWS::AccountId}:root"
-            Resource: "*"
-
-          # who is allowed to administer this key
-          - Sid: "Allow access for Key Administrators"
-            Effect: "Allow"
+              AWS: !Join [ "", [ "arn:aws:iam::", !Ref "AWS::AccountId", ":root" ] ]
             Action:
-              - "kms:Create*"
-              - "kms:Describe*"
-              - "kms:Enable*"
-              - "kms:List*"
-              - "kms:Put*"
-              - "kms:Update*"
-              - "kms:Revoke*"
-              - "kms:Disable*"
-              - "kms:Get*"
-              - "kms:Delete*"
-              - "kms:TagResource"
-              - "kms:UntagResource"
-              - "kms:ScheduleKeyDeletion"
-              - "kms:CancelKeyDeletion"
+              - "kms:*"
+            Resource:
+              - "*"
+          - Sid: "Allow access for automation"
+            Effect: "Allow"
             Principal:
               AWS:
-                - !Sub "arn:aws:iam::${AWS::AccountId}:role/${KMSAdminRoleName}"
-            Resource: "*"
-
-          - !If
-            - cGrantComplianceEngineAccess
-            - Sid: "Allow access for automation"
-              Effect: "Allow"
-              Action:
-                - kms:Decrypt
-                - kms:DescribeKey
-                - kms:Encrypt
-                - kms:GenerateDataKey
-                - kms:ReEncrypt*
-              Principal:
-                AWS:
-                  - !Sub "arn:aws:iam::${AWS::AccountId}:role/${ComplianceEngineCodePipelineRoleName}"
-                  - !Sub "arn:aws:iam::${AWS::AccountId}:role/${ComplianceEngineCodeBuildRoleName}"
-                  - !Sub "arn:aws:iam::${AWS::AccountId}:role/${FirehoseDeliveryStreamIAMRoleName}"
-                  - !Sub "arn:aws:iam::${AWS::AccountId}:role/rdk/${RDKLambdaRoleName}"
-                  - !Sub "arn:aws:iam::${AWS::AccountId}:role/${LambdaRoleETLName}"
-#                  Add this if you have quicksight setup
-#                  - !Sub "arn:aws:iam::${AWS::AccountId}:role/service-role/aws-quicksight-service-role-v0"
-              Resource: "*"
-            - !Ref AWS::NoValue
+                - !Sub "arn:aws:iam::${AWS::AccountId}:role/${ComplianceEngineCodePipelineRoleName}"
+                - !Sub "arn:aws:iam::${AWS::AccountId}:role/${ComplianceEngineCodeBuildRoleName}"
+                - !Sub "arn:aws:iam::${AWS::AccountId}:role/${FirehoseDeliveryStreamIAMRoleName}"
+                - !Sub "arn:aws:iam::${AWS::AccountId}:role/rdk/${RDKLambdaRoleName}"
+                - !Sub "arn:aws:iam::${AWS::AccountId}:role/${LambdaRoleETLName}"
+#               - !Sub "arn:aws:iam::${AWS::AccountId}:role/service-role/aws-quicksight-service-role-v0"
+            Action:
+            - kms:Decrypt
+            - kms:DescribeKey
+            - kms:Encrypt
+            - kms:GenerateDataKey
+            - kms:ReEncrypt*
+            Resource:
+              - "*"
+      Tags:
+        - Key: "managed-by"
+          Value: "cloudformation"
 
 Outputs:
   ComplianceAccountKMS:

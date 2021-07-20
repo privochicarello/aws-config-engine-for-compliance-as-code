@@ -162,7 +162,7 @@ Parameters:
     Type: String
   RdklibLayerName:
     Description: Name of RDK Lib Lambda Layer Name
-    Default: compliance-engine-rdklib-layer
+    Default: rdklib-layer
     Type: String
   LambdaETLName:
     Description: Default ETL Lambda name in compliance account.

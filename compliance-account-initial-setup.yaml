@@ -62,7 +62,7 @@ Parameters:
     Type: String
   MainRegion:
     Description: Region which is designated as main Region (e.g. us-west-2).
-    Default: us-west-2
+    Default: us-east-1
     AllowedValues: 
     - us-east-1
     - us-east-2

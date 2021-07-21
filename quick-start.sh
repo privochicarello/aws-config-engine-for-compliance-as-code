@@ -39,32 +39,16 @@ aws cloudformation deploy \
     --capabilities CAPABILITY_NAMED_IAM
 
 aws cloudformation deploy \
-    --stack-name compliance-kms \
-    --template-file compliance-account-kms-setup.yaml \
-    --no-fail-on-empty-changeset
-
-aws cloudformation deploy \
-    --stack-name compliance \
+    --stack-name compliance-engine \
     --template-file compliance-account-initial-setup.yaml \
     --parameter-overrides ComplianceAccountId=$ACCOUNT_ID ApplicationAccountIds=$ACCOUNT_ID\
     --no-fail-on-empty-changeset
-
-# aws cloudformation deploy \
-#     --stack-name compliance-kms \
-#     --template-file compliance-account-kms-setup.yaml \
-#     --parameter-overrides \
-#         GrantComplianceEngineAccess=true \
-#         $(cat ${ENV_VAR_FILE}) \
-#     --no-fail-on-empty-changeset \
-#     --region ${REGION} \
-#     --profile ${PROFILE}
 
 echo "[Build Rules and deployment scripts]"
 zip ruleset.zip -r rules rulesets-build
 aws s3 cp ruleset.zip s3://${COMPLIANCE_ACCOUNT_SOURCE_BUCKET}/
 
-echo "[Wait 5 minute for the first codepipeline deployment to complete initialization in compliance account]"
-echo "  - the codepipeline will fail for the first deployment due to application accounts have not yet setup"
+echo "[Waiting 5 minutes for the first CodePipeline run to complete initialization...]"
 sleep 300
 
 aws cloudformation wait stack-exists --stack-name RDK-Config-Rule-Functions

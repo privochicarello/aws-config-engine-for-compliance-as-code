@@ -14,7 +14,7 @@ Metadata:
         Parameters:
          - ConfigAndComplianceAuditRoleName
          - ComplianceEngineCodeBuildRoleName
-         - CentralizedS3BucketConfigFullName
+         - CentralizedS3BucketPrefix
          - ConfigAndComplianceAuditRolePath
          - ConfigRulesStackName
          - RDKLambdaRoleName
@@ -22,10 +22,10 @@ Metadata:
          - ForceDeploymentRoleInMainRegionOnly
 
 Parameters:
-  CentralizedS3BucketConfigFullName:
+  CentralizedS3BucketPrefix:
     ConstraintDescription: Enter DNS-compliant name
     Description: (Only if DeployAWSConfig is set to "true") Bucket name where Config logs are centrally stored. It is located in the Compliance Account.
-    Default: centralized-config-112233445566
+    Default: centralized-config
     MaxLength: 63
     MinLength: 10
     Type: String
@@ -80,7 +80,7 @@ Parameters:
     Type: String
   DeployAWSConfig:
     Description: Set to "true" to configure AWS Config. If set to "false", you must give the compliance account to assume the AWS Config service Role, and as well permissions to deploy CloudFormation templates and control Config.
-    Default: true
+    Default: false
     AllowedValues:
       - true
       - false
@@ -150,7 +150,7 @@ Resources:
           - s3:PutObject
           Effect: Allow
           Resource:
-          - !Join [ "", [ "arn:aws:s3:::", !Ref CentralizedS3BucketConfigFullName, "/AWSLogs/", !Ref 'AWS::AccountId', "/*"] ]
+          - !Join [ "", [ "arn:aws:s3:::", !Ref CentralizedS3BucketPrefix, !Ref 'ComplianceAccountId', "/AWSLogs/", !Ref 'AWS::AccountId', "/*"] ]
           Sid: !Join ["", ["ConfigS3Write", !Ref 'AWS::AccountId'] ]
         Version: "2012-10-17"
     DependsOn:

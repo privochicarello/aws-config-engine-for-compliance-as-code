@@ -19,7 +19,7 @@ phases:
       - echo Entered the build phase...
       - echo Build started on `date`
       - echo [] Create lambda for all the rules
-      - if [ "$RULES_LAMBDA_VPC_CONFIG" != "none" ]; then cp ./rulesets-build/$RULES_LAMBDA_VPC_CONFIG ./rules_lambda_vpc.json; fi
+      - if [ ! -z "$RULES_LAMBDA_VPC_CONFIG" ]; then cp ./rulesets-build/$RULES_LAMBDA_VPC_CONFIG ./rules_lambda_vpc.json; fi
       - chmod a+x ./rulesets-build/deploy_lambda.sh;
       - if [ "$OTHER_ACTIVE_REGIONS" != "none" ]; then ./rulesets-build/deploy_lambda.sh $LAMBDA_ROLE_ARN $ENGINE_RULE_NAME $AWS_DEFAULT_REGION,$OTHER_ACTIVE_REGIONS; else ./rulesets-build/deploy_lambda.sh $LAMBDA_ROLE_ARN $ENGINE_RULE_NAME $AWS_DEFAULT_REGION; fi
       - cd rules

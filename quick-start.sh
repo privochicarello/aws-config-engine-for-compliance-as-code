@@ -16,7 +16,10 @@ fi
 
 # Variables dependent on proper arguments
 export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-export BUCKET_NAME="compliance-engine-codebuild-source-$ACCOUNT_ID-$REGION"
+
+## add a check here. If we can't call the above command then the rest of the script won't work - so exit on error.
+
+export BUCKET_NAME="compliance-engine-codebuild-source-$ACCOUNT_ID-$AWS_DEFAULT_REGION"
 
 echo "[Deploy rdklib lambda layer]"
 
@@ -46,7 +49,7 @@ aws cloudformation deploy \
 
 echo "[Build Rules and deployment scripts]"
 zip ruleset.zip -r rules rulesets-build
-aws s3 cp ruleset.zip s3://${COMPLIANCE_ACCOUNT_SOURCE_BUCKET}/
+aws s3 cp ruleset.zip s3://${BUCKET_NAME}/
 
 echo "[Waiting 5 minutes for the first CodePipeline run to complete initialization...]"
 sleep 300
@@ -61,6 +64,7 @@ aws cloudformation deploy \
     --stack-name application-iam \
     --template-file application-account-iam.yaml \
     --no-fail-on-empty-changeset \
+    --parameter-overrides ComplianceAccountId=$ACCOUNT_ID \
     --capabilities CAPABILITY_NAMED_IAM
 
 aws cloudformation deploy \
@@ -69,4 +73,4 @@ aws cloudformation deploy \
     --no-fail-on-empty-changeset
 
 echo "[Deploy rules with CodePipeline]"
-aws codepipeline start-pipeline-execution --name ${BUCKET_NAME}
+aws codepipeline start-pipeline-execution --name Compliance-Engine-Pipeline

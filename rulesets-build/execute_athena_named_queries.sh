@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # The purpose of this script is to find the Athena named queries created in the CloudFormation stack and execute them in the appropriate order.
 
-CLOUDFORMATION_STACK_NAME="Compliance-Engine-Datalake-DO-NOT-DELETE" # The name of the stack that creates the Athena named queries.
+CLOUDFORMATION_STACK_NAME="complianceascode-engine-datalake" # The name of the stack that creates the Athena named queries.
 EXECUTION_OUTPUT_LOCATION="s3://aws-athena-query-results-$1-us-east-1/" # The S3 bucket and prefix where the query outputs will be stored.
 
 # These stages must match the LogicalId of the AWS::Athena::NamedQuery resources created by CloudFormation and in the appropriate order of execution.

@@ -11,7 +11,7 @@ Metadata:
          - ComplianceAccountId
          - ConfigAndComplianceAuditRoleName
          - ConfigAndComplianceAuditRolePath
-         - CentralizedS3BucketConfigFullName
+         - CentralizedS3BucketPrefix
       - Label:
           default: (Advanced User Only) Deployment options
         Parameters:
@@ -21,10 +21,10 @@ Metadata:
          - EngineComplianceRule
 
 Parameters:
-  CentralizedS3BucketConfigFullName:
+  CentralizedS3BucketPrefix:
     ConstraintDescription: Enter DNS-compliant name
-    Description: (Only if DeployAWSConfig is set to "true") Bucket name where Config logs are centrally stored. It is located in the Compliance Account.
-    Default: centralized-config-112233445566
+    Description: Bucket name where Config logs are centrally stored. It is located in the Compliance Account.
+    Default: centralized-config
     MaxLength: 63
     MinLength: 10
     Type: String
@@ -134,7 +134,7 @@ Resources:
     Properties:
       ConfigSnapshotDeliveryProperties:
         DeliveryFrequency: TwentyFour_Hours
-      S3BucketName: !Ref CentralizedS3BucketConfigFullName
+      S3BucketName: !Join [ "-", [ !Ref "CentralizedS3BucketPrefix", !Ref "ComplianceAccountId" ] ]
 
   NotMainDeliveryChannel:
     Condition: SetConfigNotMain
@@ -142,7 +142,7 @@ Resources:
     Properties:
       ConfigSnapshotDeliveryProperties:
         DeliveryFrequency: TwentyFour_Hours
-      S3BucketName: !Ref CentralizedS3BucketConfigFullName
+      S3BucketName: !Join [ "-", [ !Ref "CentralizedS3BucketPrefix", !Ref "ComplianceAccountId" ] ]
 
   AggregationAuthorization:
     Type: "AWS::Config::AggregationAuthorization"

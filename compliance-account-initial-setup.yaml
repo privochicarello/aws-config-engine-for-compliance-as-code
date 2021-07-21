@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Initialize the Compliance-as-Code Engine
+Description: Compliance-as-Code Engine setup
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:

@@ -6,10 +6,10 @@
     "CodeKey": null,
     "InputParameters": "{}",
     "OptionalParameters": "{}",
-    "SourceEvents": ["AWS::IAM::Group","AWS::IAM::User"],
+    "SourceEvents": "",
     "SourceIdentifier": "IAM_NO_INLINE_POLICY_CHECK",
     "RuleSets": [
-      "securitybaseline"
+      "root"
     ]
   },
   "Tags": "[]"

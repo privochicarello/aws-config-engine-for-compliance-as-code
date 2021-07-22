@@ -21,5 +21,15 @@ export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 
 export BUCKET_NAME="compliance-engine-codebuild-source-$ACCOUNT_ID-$AWS_DEFAULT_REGION"
 
-zip ruleset.zip -r rules rulesets-build account_list.json
-aws s3 cp ruleset.zip s3://${BUCKET_NAME}/
+aws cloudformation deploy \
+    --stack-name application-iam \
+    --template-file application-account-iam.yaml \
+    --no-fail-on-empty-changeset \
+    --parameter-overrides ComplianceAccountId=$ACCOUNT_ID ForceDeploymentRoleInMainRegionOnly=force\
+    --capabilities CAPABILITY_NAMED_IAM
+
+aws cloudformation deploy \
+    --stack-name application \
+    --template-file application-account-initial-setup.yaml \
+    --parameter-overrides ComplianceAccountId=$ACCOUNT_ID \
+    --no-fail-on-empty-changeset

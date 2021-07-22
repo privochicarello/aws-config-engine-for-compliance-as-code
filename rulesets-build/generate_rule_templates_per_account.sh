@@ -29,7 +29,7 @@ else
     rulesets="${line[1]}"
     rdk create-rule-template --rulesets ${rulesets} --output-file ${template_file_name} --tag-config-rules-script ${rule_tag_script_name} --rules-only
     aws s3 cp ${template_file_name} s3://$2/${template_file_name}
-    aws s3 cp ${rule_tag_script_name} s3://$2/${rule_tag_script_name}
+    #aws s3 cp ${rule_tag_script_name} s3://$2/${rule_tag_script_name}
 
   done < ../wellformedlist.txt
 

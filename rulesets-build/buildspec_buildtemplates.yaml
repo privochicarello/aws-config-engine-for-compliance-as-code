@@ -8,7 +8,7 @@ phases:
       - apt-get install zip
       - pip install rdk
       - pip install --upgrade awscli boto3
-      - curl -O -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
+      - curl -O -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
       - chmod +x jq-linux64
       - sudo mv jq-linux64 /usr/bin/jq
   pre_build:
@@ -18,22 +18,22 @@ phases:
     commands:
       - echo Entered the build phase...
       - echo Build started on `date`
-      - echo [] Create lambda for all the rules
-      - if [ ! -z "$RULES_LAMBDA_VPC_CONFIG" ]; then cp ./rulesets-build/$RULES_LAMBDA_VPC_CONFIG ./rules_lambda_vpc.json; fi
-      - chmod a+x ./rulesets-build/deploy_lambda.sh;
-      - if [ "$OTHER_ACTIVE_REGIONS" != "none" ]; then ./rulesets-build/deploy_lambda.sh $LAMBDA_ROLE_ARN $ENGINE_RULE_NAME $AWS_DEFAULT_REGION,$OTHER_ACTIVE_REGIONS; else ./rulesets-build/deploy_lambda.sh $LAMBDA_ROLE_ARN $ENGINE_RULE_NAME $AWS_DEFAULT_REGION; fi
+      - echo Create lambda for all the rules
+      - chmod a+x ./rulesets-build/deploy_lambda.sh
+      - chmod a+x ./rulesets-build/generate_rule_templates_per_account.sh
+      - ./rulesets-build/deploy_lambda.sh $LAMBDA_ROLE_ARN $ENGINE_RULE_NAME $AWS_DEFAULT_REGION
       - cd rules
-      - echo [] List all the rulesets
+      - echo List all the rulesets
       - rdk rulesets list > rulesets_list.txt
       - aws s3 cp rulesets_list.txt s3://$OUTPUT_BUCKET/rulesets_list.txt
-      - echo [] Create default template for main region
+      - echo Create default rulelist template
       - rdk create-rule-template --rulesets $DEFAULT_RULESET --output-file default.json --rules-only
       - aws s3 cp default.json s3://$OUTPUT_BUCKET/default.json
       - cd ..
-      - echo [] Create default template for all other regions
-      - if [ "$OTHER_ACTIVE_REGIONS" != "none" ]; then chmod a+x ./rulesets-build/multi-region/generate_default_template.sh; ./rulesets-build/multi-region/generate_default_template.sh $OTHER_ACTIVE_REGIONS $DEFAULT_RULESET_OTHER_REGIONS $OUTPUT_BUCKET_NO_REGION; fi
-      - echo Copy Account_List if it exists
-      - if [ "$ACCOUNT_LIST" != "none" ]; then cp ./rulesets-build/$ACCOUNT_LIST ./account_list.json; chmod a+x ./rulesets-build/generate_rule_templates_per_account.sh; ./rulesets-build/generate_rule_templates_per_account.sh $OTHER_ACTIVE_REGIONS $OUTPUT_BUCKET $OUTPUT_BUCKET_NO_REGION; cat account_list.json | jq -r '.AllAccounts[] | ([.Accountname, .AccountID , (.OwnerEmail | join(";")), (.Tags| join(","))] | join(","))' > account_list.csv; aws s3 cp account_list.csv s3://$OUTPUT_BUCKET/csv/account_list.csv; fi
+      - echo Create assigned rulelist template
+      - ./rulesets-build/generate_rule_templates_per_account.sh $OTHER_ACTIVE_REGIONS $OUTPUT_BUCKET $OUTPUT_BUCKET_NO_REGION
+      - cat account_list.json | jq -r '.AllAccounts[] | ([.Accountname, .AccountID , (.OwnerEmail | join(";")), (.Tags| join(","))] | join(","))' > account_list.csv
+      - aws s3 cp account_list.csv s3://$OUTPUT_BUCKET/csv/account_list.csv
       - echo deploy/update ETL
       - zip -j etl_evaluations.zip ./rulesets-build/etl_evaluations.py
       - aws lambda update-function-code --function-name ComplianceEngine-ETL --zip-file fileb://etl_evaluations.zip 
